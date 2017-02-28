@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.filestash.services.ContentService;
 import com.filestash.domain.*;
+import com.filestash.dto.GeneralFileStashInfoDto;
 
 /*
  * Need to support
@@ -59,6 +60,26 @@ public class ContentController {
 	
 	
 	//-------------- General FileStash level handlers for a user ----------------------
+	/*
+	 * @userId - the userId is the owner of the FileStash
+	 * @from - start date; -1 is the default value
+	 * @to - end date; -1 is the default value
+	 * @pageSize - pagination is activated if @pageSize different from default value
+	 * -1; Returns the specified amount of records at a time. -1 value returns everything
+	 * @page - which page of records to retrieve. defaults to 0(the first page). 
+	 * 	Only works if @pageSize is NOT -1. 
+	 */
+	@RequestMapping(value="/general", method = RequestMethod.GET)
+	@CrossOrigin
+	public GeneralFileStashInfoDto getFileStashInfo( 
+										 @RequestParam("userId") int userId, 
+										 @RequestParam("from")		long from,
+										 @RequestParam("to") 		long to,
+										 @RequestParam("pageSize") 	int pageSize,
+										 @RequestParam("page") 		int page ) 
+	{
+		return contentService.getFileStashInfo(userId, from, to, pageSize, page);
+	}
 	
 	@RequestMapping(value="/general/size/{userId}", method=RequestMethod.GET)
 	@CrossOrigin
@@ -76,7 +97,8 @@ public class ContentController {
 	
 	@RequestMapping(value="/general/logs", method = RequestMethod.GET)
 	@CrossOrigin
-	public List<LogItem> getFileStashLogs( @RequestParam("userId") int userId, 
+	public List<LogItem> getFileStashLogs( 
+										 @RequestParam("userId") int userId, 
 										 @RequestParam("from")		long from,
 										 @RequestParam("to") 		long to,
 										 @RequestParam("pageSize") 	int pageSize,

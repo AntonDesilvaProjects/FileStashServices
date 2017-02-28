@@ -12,6 +12,7 @@ import com.filestash.dao.ContentDaoImpl;
 import com.filestash.dao.LogDaoImpl;
 import com.filestash.domain.Content;
 import com.filestash.domain.LogItem;
+import com.filestash.dto.GeneralFileStashInfoDto;
 
 @Service
 public class ContentService {
@@ -50,8 +51,8 @@ public class ContentService {
 		if(page < 0)
 			page = 0;
 		
-		LocalDateTime fromTime = Instant.ofEpochMilli(from).atZone(ZoneId.systemDefault().systemDefault()).toLocalDateTime();
-		LocalDateTime toTime = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault().systemDefault()).toLocalDateTime(); 
+		LocalDateTime fromTime = (from == -1) ? null : Instant.ofEpochMilli(from).atZone(ZoneId.systemDefault().systemDefault()).toLocalDateTime();
+		LocalDateTime toTime = (to == -1) ? null : Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault().systemDefault()).toLocalDateTime(); 
 		
 		return logDao.getFileStashLogs(userId, fromTime, toTime, pageSize, page);
 	}
@@ -62,9 +63,17 @@ public class ContentService {
 		if(page < 0)
 			page = 0;
 		
-		LocalDateTime fromTime = Instant.ofEpochMilli(from).atZone(ZoneId.systemDefault().systemDefault()).toLocalDateTime();
-		LocalDateTime toTime = Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault().systemDefault()).toLocalDateTime(); 
+		LocalDateTime fromTime = (from == -1) ? null : Instant.ofEpochMilli(from).atZone(ZoneId.systemDefault().systemDefault()).toLocalDateTime();
+		LocalDateTime toTime = (to == -1) ? null : Instant.ofEpochMilli(to).atZone(ZoneId.systemDefault().systemDefault()).toLocalDateTime(); 
 		
 		return logDao.getContentLogs(contentId, fromTime, toTime, pageSize, page);
+	}
+	public GeneralFileStashInfoDto getFileStashInfo(int userId, long from, long to, int pageSize, int page )
+	{
+		GeneralFileStashInfoDto fileStashInfo = new GeneralFileStashInfoDto();
+		fileStashInfo.setFileStashSize(this.getFileStashSize(userId));
+		fileStashInfo.setLogs(this.getFileStashLogs(userId, from, to, pageSize, page));
+		fileStashInfo.setLastModified(this.getLastModifiedDate(userId));
+		return fileStashInfo;
 	}
 }

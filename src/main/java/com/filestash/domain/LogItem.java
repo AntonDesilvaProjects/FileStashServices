@@ -1,8 +1,11 @@
 package com.filestash.domain;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.stereotype.Component;
+
+import com.filestash.utility.TimeUtility;
 
 @Component
 public class LogItem {
@@ -11,7 +14,9 @@ public class LogItem {
 	private int contentId;
 	private int userId;
 	private LocalDateTime logTime;
+	private String readableLogTime;
 	private String logAction;
+	private String contentName;
 
 	public LogItem() {}
 	
@@ -54,6 +59,7 @@ public class LogItem {
 
 	public void setLogTime(LocalDateTime logTime) {
 		this.logTime = logTime;
+		this.setReadableLogTime(TimeUtility.getReadableFormat(this.logTime));
 	}
 
 	public String getLogAction() {
@@ -63,5 +69,22 @@ public class LogItem {
 	public void setLogAction(String logAction) {
 		this.logAction = logAction;
 	}
+	
+	public String getReadableLogTime() {
+		return readableLogTime;
+	}
+
+	public void setReadableLogTime(String readableLogTime) {
+		this.readableLogTime = readableLogTime;
+	}
+
+	public String getContentName() {
+		return contentName;
+	}
+
+	public void setContentName(String contentName) {
+		this.contentName = contentName;
+	}
+
 
 }

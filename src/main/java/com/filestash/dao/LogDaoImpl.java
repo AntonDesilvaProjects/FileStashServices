@@ -23,7 +23,8 @@ public class LogDaoImpl implements ILogDao {
 	 * @see com.filestash.dao.IContentDao#getLogs(int, java.time.LocalDateTime, java.time.LocalDateTime, int, int)
 	 * If 'from' is null, return all the logs from the beginning to the 'to' time
 	 * If 'to' is null, return all the logs from 'from' time until now
-	 * 'pageSize' determines how many records to return and 'page' determines which dividend
+	 * 'pageSize' determines how many records to return
+	 * 'page' determines which page
 	 */
 	public List<LogItem> getFileStashLogs(int userId, LocalDateTime from, LocalDateTime to, int pageSize, int page) {
 		
@@ -37,7 +38,7 @@ public class LogDaoImpl implements ILogDao {
 		{
 			//Get everything from the beginning till 'to'
 			toTstmp = Timestamp.valueOf(to);
-			sql = "SELECT * FROM log WHERE user_id = ? AND log_time <= ? ORDER BY(log_time)";
+			sql = "SELECT log.*, content.content_name FROM log INNER JOIN content ON log.content_id = content.content_id WHERE log.user_id = ? AND log.log_time <= ? ORDER BY(log.log_time)";
 			if( pageSize != -1) //Append pagination SQL only if page size is defined; else return everything
 			{
 				sql += paginationSql;
@@ -52,7 +53,7 @@ public class LogDaoImpl implements ILogDao {
 		{
 			//Get everything from the 'from' till now
 			fromTstmp = Timestamp.valueOf(from);
-			sql = "SELECT * FROM log WHERE user_id = ? AND log_time >= ? ORDER BY(log_time)";
+			sql = "SELECT log.*, content.content_name FROM log INNER JOIN content ON log.content_id = content.content_id WHERE log.user_id = ? AND log.log_time >= ? ORDER BY(log.log_time)";
 			if( pageSize != -1) //Append pagination SQL only if page size is defined; else return everything
 			{
 				sql += paginationSql;
@@ -63,11 +64,24 @@ public class LogDaoImpl implements ILogDao {
 			else
 				parameters = new Object[] { userId, fromTstmp };
 		}
+		else if ( from == null && to == null )
+		{
+			sql = "SELECT log.*, content.content_name FROM log INNER JOIN content ON log.content_id = content.content_id WHERE log.user_id = ? ORDER BY(log.log_time)";
+			if( pageSize != -1 )
+			{
+				sql += paginationSql;
+				if( page == -1 ) //This case doesn't have to be used; if caller doesn't know page, should use 0
+					page = 0;
+				parameters = new Object[] { userId, pageSize, pageSize * page };
+			}
+			else
+				parameters = new Object[] { userId };	
+		}
 		else
 		{
 			fromTstmp = Timestamp.valueOf(from);
 			toTstmp = Timestamp.valueOf(to);
-			sql = "SELECT * FROM log WHERE user_id = ? AND log_time >= ? AND log_time <= ? ORDER BY(log_time)";
+			sql = "SELECT log.*, content.content_name FROM log INNER JOIN content ON log.content_id = content.content_id WHERE log.user_id = ? AND log.log_time >= ? AND log.log_time <= ? ORDER BY(log.log_time)";
 			if( pageSize != -1) //Append pagination SQL only if page size is defined; else return everything
 			{
 				sql += paginationSql;
@@ -97,7 +111,7 @@ public class LogDaoImpl implements ILogDao {
 		{
 			//Get everything from the beginning till 'to'
 			toTstmp = Timestamp.valueOf(to);
-			sql = "SELECT * FROM log WHERE content_id = ? AND log_time <= ? ORDER BY(log_time)";
+			sql = "SELECT log.*, content.content_name FROM log INNER JOIN content ON log.content_id = content.content_id WHERE log.content_id = ? AND log.log_time <= ? ORDER BY(log.log_time)";
 			if( pageSize != -1) //Append pagination SQL only if page size is defined; else return everything
 			{
 				sql += paginationSql;
@@ -112,7 +126,7 @@ public class LogDaoImpl implements ILogDao {
 		{
 			//Get everything from the 'from' till now
 			fromTstmp = Timestamp.valueOf(from);
-			sql = "SELECT * FROM log WHERE content_id = ? AND log_time >= ? ORDER BY(log_time)";
+			sql = "SELECT log.*, content.content_name FROM log INNER JOIN content ON log.content_id = content.content_id WHERE log.content_id = ? AND log.log_time >= ? ORDER BY(log.log_time)";
 			if( pageSize != -1) //Append pagination SQL only if page size is defined; else return everything
 			{
 				sql += paginationSql;
@@ -123,11 +137,24 @@ public class LogDaoImpl implements ILogDao {
 			else
 				parameters = new Object[] { contentId, fromTstmp };
 		}
+		else if ( from == null && to == null )
+		{
+			sql = "SELECT log.*, content.content_name FROM log INNER JOIN content ON log.content_id = content.content_id WHERE log.user_id = ? ORDER BY(log.log_time)";
+			if( pageSize != -1 )
+			{
+				sql += paginationSql;
+				if( page == -1 ) //This case doesn't have to be used; if caller doesn't know page, should use 0
+					page = 0;
+				parameters = new Object[] { contentId, pageSize, pageSize * page };
+			}
+			else
+				parameters = new Object[] { contentId };	
+		}
 		else
 		{
 			fromTstmp = Timestamp.valueOf(from);
 			toTstmp = Timestamp.valueOf(to);
-			sql = "SELECT * FROM log WHERE content_id = ? AND log_time >= ? AND log_time <= ? ORDER BY(log_time)";
+			sql = "SELECT log.*, content.content_name FROM log INNER JOIN content ON log.content_id = content.content_id WHERE log.content_id = ? AND log.log_time >= ? AND log.log_time <= ? ORDER BY(log.log_time)";
 			if( pageSize != -1) //Append pagination SQL only if page size is defined; else return everything
 			{
 				sql += paginationSql;

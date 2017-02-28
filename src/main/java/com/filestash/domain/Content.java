@@ -2,7 +2,10 @@ package com.filestash.domain;
 
 import org.springframework.stereotype.Component;
 
+import com.filestash.utility.TimeUtility;
+
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 
 @Component
 public class Content {
@@ -14,7 +17,9 @@ public class Content {
 	private String path;
 	private long size;
 	private LocalDateTime uploadTime;
+	private String readbleUploadTime;
 	private LocalDateTime lastModified;
+	private String readbleLastModified;
 	private String image;
 	private String author; //Whoever that created file/folder; not necessarily the owner
 	
@@ -54,6 +59,7 @@ public class Content {
 
 	public void setUploadTime(LocalDateTime uploadTime) {
 		this.uploadTime = uploadTime;
+		this.setReadbleUploadTime(TimeUtility.getReadableFormat(this.uploadTime));
 	}
 
 	public LocalDateTime getLastModified() {
@@ -62,6 +68,7 @@ public class Content {
 
 	public void setLastModified(LocalDateTime lastModified) {
 		this.lastModified = lastModified;
+		this.setReadbleLastModified(TimeUtility.getReadableFormat(this.lastModified));
 	}
 	
 	public long getSize() {
@@ -110,6 +117,21 @@ public class Content {
 
 	public void setPath(String path) {
 		this.path = path;
+	}
+	public String getReadbleUploadTime() {
+		return readbleUploadTime;
+	}
+
+	public void setReadbleUploadTime(String readbleUploadTime) {
+		this.readbleUploadTime = readbleUploadTime;
+	}
+
+	public String getReadbleLastModified() {
+		return readbleLastModified;
+	}
+
+	public void setReadbleLastModified(String readbleLastModified) {
+		this.readbleLastModified = readbleLastModified;
 	}
 
 }

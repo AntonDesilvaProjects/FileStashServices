@@ -15,6 +15,7 @@ public class LogItemRowMapper implements RowMapper<LogItem> {
 		logItem.setLogId(row.getInt("log_id"));
 		logItem.setUserId(row.getInt("user_id"));
 		logItem.setContentId(row.getInt("content_id"));
+		logItem.setContentName(row.getString("content_name"));
 		logItem.setLogTime(row.getTimestamp("log_time").toLocalDateTime());
 		logItem.setLogAction(row.getString("log_action"));
 		return logItem;
