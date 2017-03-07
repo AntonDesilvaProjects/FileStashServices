@@ -1,20 +1,30 @@
 package com.filestash.controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.filestash.services.ContentService;
 import com.filestash.domain.*;
 import com.filestash.dto.GeneralFileStashInfoDto;
+import com.filestash.http.SimpleHttpResponse;
 
 /*
  * Need to support
@@ -58,7 +68,22 @@ public class ContentController {
 		return contentService.getContentLogs(contentId, from, to, pageSize, page);
 	}
 	
-	
+	@RequestMapping(value="/upload", method=RequestMethod.POST )
+	@CrossOrigin
+	public SimpleHttpResponse uploadFile(@RequestParam("uploadItem") MultipartFile fileUpload )
+	{
+		System.out.println(fileUpload.getOriginalFilename());
+		try {
+			byte[] fileBytes = fileUpload.getBytes();
+			Files.write(Paths.get("C:\\Users\\Anton\\Desktop\\" + fileUpload.getOriginalFilename()), fileBytes);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+		}
+		
+		return new SimpleHttpResponse(true/*, fileUpload.getOriginalFilename() + " was successfuly uploaded !"*/);
+	}
 	//-------------- General FileStash level handlers for a user ----------------------
 	/*
 	 * @userId - the userId is the owner of the FileStash
